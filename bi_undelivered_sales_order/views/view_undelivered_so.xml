@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_undelivered_so_tree" model="ir.ui.view">
+        <field name="name">sale.order.line.tree</field>
+        <field name="model">sale.order.line</field>
+        <field name="arch" type="xml">
+            <tree string="Undelivered Orders">
+                <field name="order_id" string="Sales Order Number"/>
+                <field name="order_partner_id"/>
+                <field name="order_date"/>
+                <field name="date_order" invisible="1"/>
+                <field name="product_id"/>
+                <field name="name"/>
+                <field name="product_uom"/>
+                <field name="product_uom_qty"/>
+                <field name="qty_delivered"/>
+                <field name="qty_invoiced"/>
+                <field name="price_unit"/>
+                <field name="tax_id" widget="many2many_tags"/>
+                <field name="discount"/>
+                <field name="price_total" string="Amount"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_undelivered_so_form" model="ir.ui.view">
+        <field name="name">sale.order.line.form</field>
+        <field name="model">sale.order.line</field>
+        <field name="arch" type="xml">
+          <form string="Undelivered Orders">
+            <sheet>
+                <group>
+                    <group>
+                        <field name="state" invisible="1"/>
+                        <field name="order_id" string="Sales Order Number"/>
+                        <field name="order_date"/>
+                        <field name="date_order" invisible="1"/>
+                        <field name="name"/>
+                        <field name="product_uom_qty"/>
+                        <field name="qty_invoiced"/>
+                        <field name="tax_id" widget="many2many_tags" />
+                        <field name="price_total" string="Amount"/>
+                    </group>
+                    <group>
+                        <field name="product_uom_category_id" invisible="1"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="order_partner_id"/>
+                        <field name="product_id"/>
+                        <field name="product_uom"  readonly="1"/>
+                        <field name="qty_delivered" readonly="1"/>
+                        <field name="price_unit"/>
+                        <field name="discount"/>
+                    </group>
+                </group>
+            </sheet>
+          </form>
+        </field>
+    </record>
+
+    <record id="view_undelivered_so_filter" model="ir.ui.view">
+        <field name="name">sale.order.line.list.select</field>
+        <field name="model">sale.order.line</field>
+        <field name="priority" eval="15"/>
+        <field name="arch" type="xml">
+            <search string="Search Sales Order">
+                <field name="order_id" string="Sales Order Number"/>
+                <field name="order_partner_id"/>
+                <field name="product_id"/>
+                <filter string="Order Date" name="filter_order_date" date="order_date"/>
+                <group expand="0" string="Group By">
+                    <filter name="order_id" string="Order" domain="[]" context="{'group_by': 'order_id'}"/>
+                    <filter string="Customer" name="order_partner_id" domain="[]" context="{'group_by': 'order_partner_id'}"/>
+                    <filter string="Product" name="product_id" domain="[]" context="{'group_by': 'product_id'}"/>
+                </group>
+           </search>
+        </field>
+    </record>
+
+    <record id="action_undelivered_so_view" model="ir.actions.act_window">
+        <field name="name">Undelivered Orders</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.order.line</field>
+        <field name="domain">[('qty_delivered','=',0)]</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_undelivered_so_tree"/>
+    </record>
+
+	<menuitem id="undelivered_so_menu"
+            name="Undelivered Orders"
+            parent="sale.sale_order_menu"
+            action="bi_undelivered_sales_order.action_undelivered_so_view"
+            sequence="6"/>
+</odoo>
